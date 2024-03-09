@@ -1,0 +1,17 @@
+# .gitignore
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build artifacts for React
+water_dashboard/build/
+water_dashboard/dist/
+
+# Ignore environment files
+.water_dashboard_backend/.env
+
+# Ignore log files
+.water_dashboard_backend/logs/
+
+# Ignore dependencies for Node.js
+.water_dashboard_backend/node_modules/
