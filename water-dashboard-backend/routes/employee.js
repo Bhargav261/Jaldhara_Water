@@ -2,9 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Employee = require('../Schema/Employee');
 
-router.get('/', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
     try {
-        const data = await Employee.find({});
+        const { search } = req.body;
+
+        let query = {};
+        if (search) {
+            query = { name: { $regex: new RegExp(search, 'i') } };
+        }
+
+        const data = await Employee.find(query);
         res.json({
             status: 'success',
             message: 'Employees retrieved successfully',
