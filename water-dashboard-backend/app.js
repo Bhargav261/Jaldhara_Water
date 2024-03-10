@@ -1,15 +1,18 @@
+// app.js
 const express = require('express');
-const cors = require("cors");
+const cors = require('cors');
 const app = express();
 const connectDB = require('./config/db');
+const employeeRoutes = require('./routes/employee');
+
 connectDB();
 
 const port = process.env.PORT || 80;
 
 app.use(cors({
-	origin: '*',
-	credentials: true,
-	optionSuccessStatus: 200,
+  origin: '*',
+  credentials: true,
+  optionSuccessStatus: 200,
 }));
 
 app.use(express.json());
@@ -18,19 +21,18 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
-app.get('/api/employee', (req, res) => {
-  const employeeData = {
-    id: 1,
-    name: 'John Doe',
-    position: 'Developer',
-  };
+// Use employee routes
+app.use('/api/employee', employeeRoutes);
 
-  console.log("employee call");
-  // Sending JSON response
-  res.json({
-    status: 'success',
-    message: 'Employee data retrieved successfully',
-    data: employeeData,
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({
+    status: 'failure',
+    message: 'Server error',
+    payload: {
+      error: err.message,
+    },
   });
 });
 
