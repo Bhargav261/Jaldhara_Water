@@ -3,6 +3,7 @@ import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 import MiddleService from "../API/MiddleService";
 import React, { useState, useEffect } from "react";
+import { debouncedHandleSearch } from '../Service/service'
 
 const Employee = () => {
 
@@ -23,12 +24,16 @@ const Employee = () => {
 
     useEffect(() => {
         callAPI();
-    }, [])
+    }, [searchValue])
 
     const callAPI = async () => {
         setLoading(true);
         try {
-            const response = await MiddleService.getData(`employee`);
+            const payload = {
+                "search": searchValue || "",
+            };
+
+            const response = await MiddleService.postData(`employee`, payload);
             if (response.status === 'success') {
                 setEmployeeList(response?.data)
             }
@@ -42,6 +47,8 @@ const Employee = () => {
     const handleSearch = (e) => {
         const { value } = e.target;
         setSearchValue(value);
+        // const searcDebounce = debouncedHandleSearch(value);
+        // console.log("searcDebounce: - ", searcDebounce);
     }
 
     const toggleModal = ({ type, status, data }) => {
