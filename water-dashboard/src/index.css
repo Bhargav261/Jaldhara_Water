@@ -11,3 +11,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.modal-dialog{
+  width: 500px;
+  border-radius: 0.3rem;
+}
+
+.react-responsive-modal-modal{
+  padding: 0px !important;
+  max-width: 15000px !important
+}
+
+.modal-dialog-lg{
+  width: 1300px;
+  border-radius: 0.3rem;
+}
+
+.justify-content-right {
+  justify-content: right;
+}
+
+.errorMessage {
+  color: #bf1650;
+}
+
+.errorMessage::before {
+  display: inline;
+  content: "⚠ ";
+}
