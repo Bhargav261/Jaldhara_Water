@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import 'react-responsive-modal/styles.css';
+import useDebounce from '../Hooks/useDebounce';
 import { Modal } from 'react-responsive-modal';
 import MiddleService from "../API/MiddleService";
 import React, { useState, useEffect } from "react";
-import { debouncedHandleSearch } from '../Service/service'
 
 const Employee = () => {
 
@@ -13,6 +13,8 @@ const Employee = () => {
     const [searchValue, setSearchValue] = useState('');
     const [employeeList, setEmployeeList] = useState('');
     const [modalStatus, setModalStatus] = useState({ delete: false, addEdit: false });
+
+    const debouncedValue = useDebounce(searchValue, 500);
 
     const {
         register,
@@ -24,13 +26,13 @@ const Employee = () => {
 
     useEffect(() => {
         callAPI();
-    }, [searchValue])
+    }, [debouncedValue])
 
     const callAPI = async () => {
         setLoading(true);
         try {
             const payload = {
-                "search": searchValue || "",
+                "search": debouncedValue || "",
             };
 
             const response = await MiddleService.postData(`employee`, payload);
@@ -47,8 +49,6 @@ const Employee = () => {
     const handleSearch = (e) => {
         const { value } = e.target;
         setSearchValue(value);
-        // const searcDebounce = debouncedHandleSearch(value);
-        // console.log("searcDebounce: - ", searcDebounce);
     }
 
     const toggleModal = ({ type, status, data }) => {
