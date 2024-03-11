@@ -12,6 +12,16 @@ code {
     monospace;
 }
 
+#__react-alert__ div div div {
+  font-size: 12px;
+  width: 350px !important;
+  z-index: 1052 !important;
+}
+
+#__react-alert__ div{
+  z-index: 1052 !important;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

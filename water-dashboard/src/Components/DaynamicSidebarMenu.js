@@ -11,4 +11,16 @@ export const sidebarMenu = [
         title: "Employee List",
         activeShow: ["/app/employee"],
     },
+    {
+        url: "/app/water",
+        icon: "icon-cog  menu-icon",
+        title: "Water Bottle",
+        activeShow: ["/app/water"],
+    },
+    {
+        url: "/app/report",
+        icon: "icon-cog  menu-icon",
+        title: "Report",
+        activeShow: ["/app/report"],
+    },
 ];

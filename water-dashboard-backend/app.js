@@ -3,7 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const connectDB = require('./config/db');
+const loginRoutes = require('./routes/login');
 const employeeRoutes = require('./routes/employee');
+const waterBottleRoutes = require('./routes/waterBottle');
 
 connectDB();
 
@@ -17,12 +19,10 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
-
 // Use employee routes
+app.use('/api/login', loginRoutes);
 app.use('/api/employee', employeeRoutes);
+app.use('/api/water_bottle', waterBottleRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

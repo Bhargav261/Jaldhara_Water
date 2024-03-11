@@ -22,7 +22,7 @@ class Auth {
     isAuthenticated = () => {
         const access_token = this.getAccessToken();
 
-        return true
+        // return true
 
         if (!access_token) {
             this.logout();

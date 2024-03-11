@@ -1,6 +1,8 @@
 import Auth from '../Route/Auth';
 import Home from '../Pages/Home';
 import About from "../Pages/About";
+import Water from '../Pages/Water';
+import Report from '../Pages/Report';
 import React, { useEffect } from "react";
 import Employee from "../Pages/Employee";
 import Header from '../Components/Header';
@@ -31,7 +33,9 @@ const AfterLoginRoute = () => {
                         <Routes>
                             <Route element={<ClientPrivateRoute auth={Auth.isAuthenticated()} />} >
                                 <Route exact path="/" element={<Home />} />
+                                <Route exact path="/water" element={<Water />} />
                                 <Route exact path="/about" element={<About />} />
+                                <Route exact path="/report" element={<Report />} />
                                 <Route exact path="/dashboard" element={<Home />} />
                                 <Route exact path="/employee" element={<Employee />} />
                             </Route>
