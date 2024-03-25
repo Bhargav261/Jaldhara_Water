@@ -33,7 +33,7 @@ const Login = () => {
                 alert.success(message);
                 navigate('/app/dashboard');
             }else{
-                alert.success(message);
+                alert.error(message);
             }
         } catch (error) {
             console.error(error);

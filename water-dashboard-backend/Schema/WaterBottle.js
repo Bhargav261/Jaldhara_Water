@@ -14,6 +14,14 @@ var WaterBottle = new Schema({
         type: Number,
         required: true
     },
+    total: {
+        type: Number,
+        required: true
+    },
+    order_date: {
+        type: Date,
+        required: true
+    }
 },{
     timestamps: true
 });

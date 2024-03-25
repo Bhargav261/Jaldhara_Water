@@ -1,3 +1,4 @@
+import { useAlert } from 'react-alert';
 import { useForm } from "react-hook-form";
 import 'react-responsive-modal/styles.css';
 import useDebounce from '../Hooks/useDebounce';
@@ -6,6 +7,7 @@ import MiddleService from "../API/MiddleService";
 import React, { useState, useEffect } from "react";
 
 const Employee = () => {
+    const alert = useAlert();
 
     const [type, setType] = useState('')
     const [isLoading, setLoading] = useState(true);
@@ -65,8 +67,9 @@ const Employee = () => {
         }
 
         if (type === 'edit') {
-            const { name } = data;
+            const { name, price } = data;
             setValue("name", name)
+            setValue("price", price)
         }
     }
 
@@ -90,20 +93,25 @@ const Employee = () => {
 
     const onSubmit = async (data) => {
 
-        const { name } = data;
+        const { name, price } = data;
         const { _id: id } = modalInfo || {};
 
         setLoading(true);
         try {
-            const payload = { id, name }
+            const payload = { id, name, price }
             const response = await MiddleService.postData(`employee/addEdit`, payload);
 
             if (response.status === 'success') {
                 toggleModal({ type: 'addEdit', status: false })
                 callAPI();
+                alert.success('Success');
+            } else {
+                alert.error(`error ${response?.payload?.error}`);
             }
+            alert.success('Success');
         } catch (error) {
             console.error(error);
+            alert.error('Something went wrong');
         }
         setLoading(false);
     };
@@ -130,6 +138,7 @@ const Employee = () => {
                                             <tr>
                                                 <th>No</th>
                                                 <th>Name</th>
+                                                <th>Bottle Price</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -137,11 +146,12 @@ const Employee = () => {
                                             {
                                                 employeeList?.length ?
                                                     employeeList?.map((item, index) => {
-                                                        const { id, name } = item;
+                                                        const { id, name, price } = item;
                                                         return (
                                                             <tr key={id}>
                                                                 <td>{index + 1}</td>
                                                                 <td>{name}</td>
+                                                                <td>{price}</td>
                                                                 <td>
                                                                     <i title="Edit" style={{ marginRight: 15 }} className="color-red fa fa-edit cursor-pointer" onClick={() => toggleModal({ type: 'edit', status: true, data: item })}></i>
                                                                     <i title="Delete" className="color-red fa fa-trash cursor-pointer" onClick={() => toggleModal({ type: 'delete', status: true, data: item })}></i>
@@ -187,6 +197,16 @@ const Employee = () => {
                                         })}
                                         class="form-control form-control-lg" placeholder="Enter First Name" />
                                     {errors?.name && <p className="errorMessage">{errors?.name?.message}</p>}
+                                </div>
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input
+                                        type="number"
+                                        {...register("price", {
+                                            required: 'Price is requried',
+                                        })}
+                                        class="form-control form-control-lg" placeholder="Enter Price" />
+                                    {errors?.price && <p className="errorMessage">{errors?.price?.message}</p>}
                                 </div>
                                 <div class="mt-3 d-flex justify-content-right">
                                     <button class="btn btn-primary btn-rounded br-8 btn-fw" disabled={isLoading} style={{ marginRight: 5 }}>

@@ -25,10 +25,10 @@ router.post('/', auth, async (req, res, next) => {
 
 router.post('/addEdit', async (req, res, next) => {
     try {
-        const { id, name } = req.body;
+        const { id, name, price } = req.body;
 
         if (id) {
-            const updatedEmployee = await Employee.findByIdAndUpdate(id, { name }, { new: true });
+            const updatedEmployee = await Employee.findByIdAndUpdate(id, { name, price }, { new: true });
 
             const responseMessage = updatedEmployee
                 ? { status: 'success', message: 'Employee updated successfully', data: updatedEmployee }
@@ -36,7 +36,7 @@ router.post('/addEdit', async (req, res, next) => {
 
             res.json(responseMessage);
         } else {
-            const employeeData = { name };
+            const employeeData = { name, price };
             const newEmployee = new Employee(employeeData);
             const savedEmployee = await newEmployee.save();
 

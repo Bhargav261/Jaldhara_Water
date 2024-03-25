@@ -1,3 +1,4 @@
+import { useAlert } from 'react-alert';
 import { useForm } from "react-hook-form";
 import 'react-responsive-modal/styles.css';
 import useDebounce from '../Hooks/useDebounce';
@@ -8,6 +9,8 @@ import { dateTimeFormat } from '../Service/service';
 
 
 const Water = () => {
+
+    const alert = useAlert();
 
     const [type, setType] = useState('')
     const [isLoading, setLoading] = useState(true);
@@ -24,8 +27,19 @@ const Water = () => {
         handleSubmit,
         reset,
         setValue,
+        watch,
         formState: { errors }
     } = useForm();
+
+    const watchedValue = watch();
+
+    useEffect(() => {
+        if (watchedValue?.employee) {
+            setValue('price', employeeList?.[watchedValue?.employee]?.price)
+        } else {
+            setValue('price', 0)
+        }
+    }, [watchedValue?.employee])
 
     useEffect(() => {
         getEmployeeListOptions();
@@ -61,8 +75,14 @@ const Water = () => {
             };
 
             const response = await MiddleService.postData(`employee`, payload);
-            if (response.status === 'success') {
-                setEmployeeList(response?.data)
+            if (response.status === 'success' && response?.data?.length) {
+                const result = {};
+                response?.data?.map((item) => {
+                    const { _id, name, price } = item;
+                    result[_id] = { _id, name, price }
+                    return null;
+                })
+                setEmployeeList(result)
             }
         }
         catch (error) {
@@ -94,8 +114,6 @@ const Water = () => {
             setValue("employee", employeeId)
             setValue("number_of_bottle", number_of_bottle)
             setValue("price", price)
-        } else {
-            setValue("price", 5)
         }
     }
 
@@ -119,20 +137,24 @@ const Water = () => {
 
     const onSubmit = async (data) => {
 
-        const { employee, number_of_bottle, price } = data;
+        const { employee, number_of_bottle, price, order_date } = data;
         const { _id: id } = modalInfo || {};
 
         setLoading(true);
         try {
-            const payload = { id, employeeId: employee, number_of_bottle, price }
+            const payload = { id, employeeId: employee, number_of_bottle, price, total: number_of_bottle * price, order_date }
             const response = await MiddleService.postData(`water_bottle/addEdit`, payload);
 
             if (response.status === 'success') {
                 toggleModal({ type: 'addEdit', status: false })
                 callAPI();
+                alert.success('Success');
+            } else {
+                alert.error(`error ${response?.payload?.error}`);
             }
         } catch (error) {
             console.error(error);
+            alert.error('Something went wrong');
         }
         setLoading(false);
     };
@@ -162,7 +184,7 @@ const Water = () => {
                                                 <th>Number of Bottle</th>
                                                 <th>Price</th>
                                                 <th>Total</th>
-                                                <th>Date Time</th>
+                                                <th>Date (DD-MM-YY)</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -170,15 +192,15 @@ const Water = () => {
                                             {
                                                 waterBottleList?.length ?
                                                     waterBottleList?.map((item, index) => {
-                                                        const { id, name, number_of_bottle, price, createdAt } = item;
+                                                        const { _id: id, name, number_of_bottle, price, order_date } = item;
                                                         return (
                                                             <tr key={id}>
                                                                 <td>{index + 1}</td>
-                                                                <td>{name}</td>
+                                                                <td>{id || name}</td>
                                                                 <td>{number_of_bottle}</td>
                                                                 <td>{price}</td>
                                                                 <td>{price * number_of_bottle}</td>
-                                                                <td>{dateTimeFormat(createdAt)}</td>
+                                                                <td>{dateTimeFormat(order_date)}</td>
                                                                 <td>
                                                                     <i title="Edit" style={{ marginRight: 15 }} className="color-red fa fa-edit cursor-pointer" onClick={() => toggleModal({ type: 'edit', status: true, data: item })}></i>
                                                                     <i title="Delete" className="color-red fa fa-trash cursor-pointer" onClick={() => toggleModal({ type: 'delete', status: true, data: item })}></i>
@@ -217,6 +239,15 @@ const Water = () => {
 
                             <form class="pt-3" onSubmit={handleSubmit(onSubmit)}>
                                 <div class="form-group">
+                                    <label>Date</label>
+                                    <input name="order_date" type="date"
+                                        {...register("order_date", {
+                                            required: 'Date is requried',
+                                        })}
+                                        class="form-control form-control-lg" placeholder="Enter Order Date" />
+                                    {errors?.date && <p className="errorMessage">{errors?.date?.message}</p>}
+                                </div>
+                                <div class="form-group">
                                     <label>Employee</label>
                                     <select name="employee"
                                         {...register("employee", {
@@ -226,22 +257,16 @@ const Water = () => {
                                         disabled={type === 'edit' ? true : false}
                                     >
                                         <option value="">Select Employee</option>
-                                        {
-                                            employeeList?.length && employeeList?.map((item) => {
-                                                const { _id: id, name } = item;
-                                                return (
-                                                    <>
-                                                        <option value={id}>{name}</option>
-                                                    </>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                    {/* <input
-                                        {...register("name", {
-                                            required: 'Name is requried',
+                                        {employeeList && Object.values(employeeList)?.length && Object.values(employeeList)?.map((item) => {
+                                            const { _id: id, name } = item;
+                                            return (
+                                                <option key={id} value={id}>
+                                                    {name}
+                                                </option>
+                                            );
                                         })}
-                                        class="form-control form-control-lg" placeholder="Enter First Name" /> */}
+
+                                    </select>
                                     {errors?.employee && <p className="errorMessage">{errors?.employee?.message}</p>}
                                 </div>
                                 <div class="form-group">
@@ -259,7 +284,7 @@ const Water = () => {
                                         {...register("price", {
                                             required: 'Price is requried',
                                         })}
-                                        class="form-control form-control-lg" placeholder="Enter Price" />
+                                        class="form-control form-control-lg" placeholder="Enter Price" disabled readOnly />
                                     {errors?.price && <p className="errorMessage">{errors?.price?.message}</p>}
                                 </div>
                                 <div class="mt-3 d-flex justify-content-right">

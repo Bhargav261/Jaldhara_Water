@@ -24,10 +24,10 @@ router.post('/', async (req, res, next) => {
 
 router.post('/addEdit', async (req, res, next) => {
     try {
-        const { id, employeeId, number_of_bottle, price } = req.body;
+        const { id, employeeId, number_of_bottle, price, total, order_date } = req.body;
 
         if (id) {
-            const updateRecord = await WaterBottle.findByIdAndUpdate(id, { number_of_bottle, price }, { new: true });
+            const updateRecord = await WaterBottle.findByIdAndUpdate(id, { number_of_bottle, price, total, order_date }, { new: true });
 
             const responseMessage = updateRecord
                 ? { status: 'success', message: 'Water Bottle updated successfully', data: updateRecord }
@@ -35,7 +35,7 @@ router.post('/addEdit', async (req, res, next) => {
 
             res.json(responseMessage);
         } else {
-            const newRecord = { employeeId, number_of_bottle, price };
+            const newRecord = { employeeId, number_of_bottle, price, total, order_date };
             const recordRequest = new WaterBottle(newRecord);
             const saveRequest = await recordRequest.save();
 
