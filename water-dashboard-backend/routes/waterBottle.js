@@ -4,11 +4,17 @@ const WaterBottle = require('../Schema/WaterBottle');
 
 router.post('/', async (req, res, next) => {
     try {
-        const { search } = req.body;
+        const { search, order_date, employeeId } = req.body;
 
         let query = {};
         if (search) {
             query = { name: { $regex: new RegExp(search, 'i') } };
+        }
+        if (order_date) {
+            query.order_date = new Date(order_date);
+        }
+        if (employeeId) {
+            query.employeeId = employeeId;
         }
 
         const data = await WaterBottle.find(query);

@@ -5,7 +5,7 @@ import useDebounce from '../Hooks/useDebounce';
 import { Modal } from 'react-responsive-modal';
 import MiddleService from "../API/MiddleService";
 import React, { useState, useEffect } from "react";
-import { dateTimeFormat } from '../Service/service';
+import { dateTimeFormat, todatDate } from '../Service/service';
 
 
 const Water = () => {
@@ -54,6 +54,7 @@ const Water = () => {
         try {
             const payload = {
                 "search": debouncedValue || "",
+                "order_date": todatDate()
             };
 
             const response = await MiddleService.postData(`water_bottle`, payload);
@@ -63,6 +64,7 @@ const Water = () => {
         }
         catch (error) {
             console.error(error);
+            alert.error('Something went wrong');
         }
         setLoading(false);
     }
@@ -192,14 +194,14 @@ const Water = () => {
                                             {
                                                 waterBottleList?.length ?
                                                     waterBottleList?.map((item, index) => {
-                                                        const { _id: id, name, number_of_bottle, price, order_date } = item;
+                                                        const { _id: id, employeeId, name, number_of_bottle, price, order_date, total } = item;
                                                         return (
                                                             <tr key={id}>
                                                                 <td>{index + 1}</td>
-                                                                <td>{id || name}</td>
+                                                                <td>{name || employeeList[employeeId]?.name || ''}</td>
                                                                 <td>{number_of_bottle}</td>
                                                                 <td>{price}</td>
-                                                                <td>{price * number_of_bottle}</td>
+                                                                <td>{total}</td>
                                                                 <td>{dateTimeFormat(order_date)}</td>
                                                                 <td>
                                                                     <i title="Edit" style={{ marginRight: 15 }} className="color-red fa fa-edit cursor-pointer" onClick={() => toggleModal({ type: 'edit', status: true, data: item })}></i>

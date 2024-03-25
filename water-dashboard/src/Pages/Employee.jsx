@@ -108,7 +108,6 @@ const Employee = () => {
             } else {
                 alert.error(`error ${response?.payload?.error}`);
             }
-            alert.success('Success');
         } catch (error) {
             console.error(error);
             alert.error('Something went wrong');

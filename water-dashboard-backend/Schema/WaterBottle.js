@@ -3,7 +3,8 @@ var Schema = mongoose.Schema;
 
 var WaterBottle = new Schema({
     employeeId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Employee',
         required: true
     },
     number_of_bottle: {

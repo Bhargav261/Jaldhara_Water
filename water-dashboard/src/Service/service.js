@@ -6,3 +6,7 @@ export const dateTimeFormat = (customDate) => {
   }
   return dayjs(customDate).format("DD-MM-YYYY")
 }
+
+export const todatDate = () => {
+  return dayjs().format('YYYY-MM-DD');
+}
